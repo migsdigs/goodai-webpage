@@ -3,108 +3,91 @@ import asyncio
 from aiohttp import web, WSMsgType
 import random
 import json
+import ssl
 
-# Create Websocket request handler
+# Create Websocket request handler 
 async def websocket_handler(request):
-    ws = web.WebSocketResponse()
-    await ws.prepare(request)
+    """
+    Function to handle websocket requests from a client.
+    Recieves request as JSON containing a frequency value.
+    Send respsonse to request as a random generated value at specified frequency.
+    """
 
-    frequency = 10
+    ws = web.WebSocketResponse()    # Create instance of WebSocket
+    await ws.prepare(request)       # Wait for request
 
-    async def send_data():
+    frequency = 10                  # Initial frequency value
+
+    async def send_data():  
         while True:
-            await asyncio.sleep(1/frequency)
-            # await ws.send_json({'size':random.randint(1,1000)})
-            await ws.send_str(str(random.randint(1,1000)))
+            await asyncio.sleep(1/frequency)                    # do not send anything for 1/frequency seconds
+            await ws.send_json({'size':random.random()})        # send JSON with 'size' parameter, a random float generated between 0-1
+            # await ws.send_str(str(random.randint(1,1000)))
+            
     
-    # can execute coroutine in background without waiting for it to finish
+    # can execute the send_data coroutine in background without waiting for it to finish
     asyncio.ensure_future(send_data())
 
+    # To handle request messages from client:
     async for msg in ws:
         if msg.type == web.WSMsgType.TEXT:
-            # data = json.loads(msg.data)
-            data = msg.data
-            frequency = float(data)
-            print(frequency)
+            data = json.loads(msg.data)             # Load JSON data from request
+            data_frequency = data['frequency']      # Extract frequency value
+            # data = msg.data
+
+            try:                                    # Update frequency value if it is not equal to 0 and greater than 0.
+                if float(data_frequency) != 0 and float(data_frequency) >= 0:
+                    frequency = float(data_frequency)
+                    print(f"Frequency: {int(frequency)} Hz")
+            except:                                 # If frequency value is invalid, frequency remains the same.
+                print(data)
+                frequency = frequency
+                print("Frequency given was not a number.")
+                
     
     return ws
-            
 
+# Create an instance of the application
 app = web.Application()
+
+# Add route
 app.add_routes([web.get('/ws', websocket_handler)])
 
 
 if __name__ == '__main__':
     web.run_app(app)
 
-# # Create Websocket request handler
-# async def websocket_handler(request):
-
-#     # create websocket response object
-#     ws = web.WebSocketResponse()
-#     await ws.prepare(request)   # asynchronous: perform other tasks while waiting for request
 
 
-#     async for msg in ws:
-#         while True:
-#             try:
-#                 # Generate random value
-#                 random_value = random.randint(1,1000)   # Probs need to adjust this later
-                
-#                 print(f"message from client: {msg.data}")
-#                 # send random value to frontend as string
-#                 await ws.send_str(str(random_value))
-                
-#                 # delay according to frequency in textbox on frontend
-#                 try:
-#                     await asyncio.sleep(1/int(msg.data))
-#                 except:
-#                    await asyncio.sleep(1)
+# # New stuff added for SSL
+# async def create_server():
+#     app = web.Application()
+#     # app.router.add_get('/ws', websocket_handler)
+#     app.add_routes([web.get('/ws', websocket_handler)])
+
+#     ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
+#     ssl_context.load_cert_chain('/home/miguel/goodai-webpage/certificate.crt', '/home/miguel/goodai-webpage/private.key')
+
+#     runner = web.AppRunner(app)
+#     await runner.setup()
+#     site = web.TCPSite(runner, 'localhost', 8080, ssl_context=ssl_context)
+#     await site.start()
+
+#     print("Server started")
+#     return runner, site
+
+# async def close_server(runner, site):
+#     await runner.cleanup()
+#     await site.stop()
+
+# if __name__ == "__main__":
+#     loop = asyncio.get_event_loop()
+#     server, site = loop.run_until_complete(create_server())
+
+#     try:
+#         loop.run_forever()
+#     except KeyboardInterrupt:
+#         loop.run_until_complete(close_server(server, site))
             
 
-#             except asyncio.CancelledError:
-#                 break
-    
-        
-#     return ws
-
-
-# app = web.Application()
-# app.add_routes([web.get('/ws', websocket_handler)])
-
-
-# if __name__ == '__main__':
-#     web.run_app(app)
-
-
-
-
-
-
-
-
-# from aiohttp import web, WSMsgType
-# import random
-
-# async def websocket_handler(request):
-#     ws = web.WebSocketResponse()
-#     await ws.prepare(request)
-
-#     async for msg in ws:
-#         # Generate random value
-#         random_value = random.randint(1,1000)   # Probs need to adjust this later
-#         if msg.type == WSMsgType.TEXT:
-#             await ws.send_str(f"you have send {msg.data} and we return {random_value}")
-#         elif msg.type == WSMsgType.BINARY:
-#             await ws.send_bytes(msg.data)
-#         elif msg.type == WSMsgType.ERROR:
-#             break
-
-#     return ws
-
-# app = web.Application()
-# app.router.add_get('/ws', websocket_handler)
-
-# if __name__ == '__main__':
-#     web.run_app(app)
 

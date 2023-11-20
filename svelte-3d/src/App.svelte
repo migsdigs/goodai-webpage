@@ -20,7 +20,7 @@
 		spin3 += 0.005;
 	});
 
-	// On spawn?
+	// On spawn
 	onMount(() => {
 
 		
@@ -74,13 +74,15 @@
 
 
 <!-- 3D components -->
+
+
 <div class="container">
 	<SC.Canvas antialias background={new THREE.Color('papayawhip')}>
 		
 		<!--Cube 3D component  -->
 		<SC.Mesh 
 			geometry={new THREE.BoxGeometry()} 
-			material={new THREE.MeshStandardMaterial({ color: 0xff3e00 })}
+			material={new THREE.MeshStandardMaterial({ color: 0x03bafc })}
 			scale={[size, size, size]}
 			rotation={[spin1, spin1, spin1]}
 			castshadow
@@ -90,7 +92,7 @@
 		<!-- Sphere 3D Component -->
 		<SC.Mesh
 			geometry={new THREE.SphereGeometry()}
-			material={new THREE.MeshStandardMaterial({ color: 0xffff00 })}
+			material={new THREE.MeshStandardMaterial({ color: 0xfa0724 })}
 			rotation={[0, -spin2, 0]}
 			scale={size}
 		/>
@@ -98,7 +100,7 @@
 		<!-- Cylinder 3D component -->
 		<SC.Mesh 
 			geometry={new THREE.CylinderGeometry()} 
-			material={new THREE.MeshStandardMaterial({ color: 0xff3e00 })}
+			material={new THREE.MeshStandardMaterial({ color: 0xa670db })}
 			scale={[size/2, size, size/2]}
 			rotation={[spin3, spin3, spin3]}
 			castshadow

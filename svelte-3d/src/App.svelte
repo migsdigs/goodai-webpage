@@ -48,7 +48,7 @@
 		socket.send(JSON.stringify({ frequency }));
 	};
 
-	
+
 	/**
 	 * Update frequency value (also does not allow frequency value to be <1 and >30)
 	 */
@@ -216,11 +216,5 @@
 		top: 0;
 	}
 
-	h1 {
-		color: white;
-	}
-
-
-	
 
 </style>

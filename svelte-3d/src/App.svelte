@@ -27,7 +27,7 @@
 	});
 
 	// Connect to websocket url and log connection message
-	socket = new WebSocket('ws://0.0.0.0:8080/ws');
+	socket = new WebSocket('ws://0.0.0.0:8000/ws');
 
 	// Execute upon connecting to websocket server:
 	socket.onopen = () => {

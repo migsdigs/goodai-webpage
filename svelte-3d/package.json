@@ -20,6 +20,7 @@
   },
   "dependencies": {
     "carbon-components-svelte": "^0.82.1",
+    "dotenv": "^16.3.1",
     "sirv-cli": "^2.0.0",
     "svelte-cubed": "^0.2.1",
     "three": "^0.158.0"

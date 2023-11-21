@@ -26,8 +26,9 @@
 		spin3 += 0.005;
 	});
 
+	let url = `process.env.URL`;
 	// Connect to websocket url and log connection message
-	socket = new WebSocket('ws://0.0.0.0:8000/ws');
+	socket = new WebSocket(url);
 
 	// Execute upon connecting to websocket server:
 	socket.onopen = () => {

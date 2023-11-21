@@ -1,4 +1,6 @@
 import { spawn } from 'child_process';
+import dotenv from 'dotenv';
+import sveltePreprocess from 'svelte-preprocess';
 import svelte from 'rollup-plugin-svelte';
 import commonjs from '@rollup/plugin-commonjs';
 import terser from '@rollup/plugin-terser';
@@ -7,6 +9,8 @@ import livereload from 'rollup-plugin-livereload';
 import css from 'rollup-plugin-css-only';
 
 const production = !process.env.ROLLUP_WATCH;
+
+dotenv.config()
 
 function serve() {
 	let server;
@@ -42,8 +46,12 @@ export default {
 			compilerOptions: {
 				// enable run-time checks when not in production
 				dev: !production
-			}
+			},
+			preprocess: sveltePreprocess({
+				replace: [["process.env.URL", process.env.URL]],
+			}),
 		}),
+		
 		// we'll extract any component CSS out into
 		// a separate file - better for performance
 		css({ output: 'bundle.css' }),
